@@ -18,8 +18,9 @@ const Mahasiswa = () => {
 	};
 
   useEffect(() => {
-	  setTimeout(() => fetchMahasiswa(), 500);
-	}, []);
+    const timer = setTimeout(() => fetchMahasiswa(), 500);
+    return () => clearTimeout(timer);
+  }, []);
   
   const [form, setForm] = useState({ nim: "", nama: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,6 +61,11 @@ const Mahasiswa = () => {
 
     if (!form.nim || !form.nama) {
       alert("NIM dan Nama wajib diisi");
+      return;
+    }
+
+    if (!isEdit && mahasiswa.some((mhs) => mhs.nim === form.nim)) {
+      alert("NIM sudah terdaftar!");
       return;
     }
 
@@ -122,6 +128,7 @@ const Mahasiswa = () => {
 
                 <td className="py-2 px-4 text-center space-x-2">
                   <Button
+                    size="sm"
                     onClick={() =>
                       navigate(`/admin/mahasiswa/${mhs.nim}`)
                     }
