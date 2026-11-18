@@ -100,21 +100,7 @@ const Mahasiswa = () => {
           </Button>
         </div>
 
-<MahasiswaTable
-  data={mahasiswa}
-  onEdit={handleEdit}
-  onDelete={handleDelete}
-  onDetail={(nim) => navigate(`/admin/mahasiswa/${nim}`)}
-/>
 
-<MahasiswaModal
-	isOpen={isModalOpen}
-  isEdit={isEdit}
-  form={form}
-  onChange={handleChange}
-  onClose={() => setIsModalOpen(false)}
-  onSubmit={handleSubmit}
-/>
         <table className="w-full text-sm text-gray-700">
           <thead className="bg-blue-600 text-white">
             <tr>
@@ -230,7 +216,7 @@ const Mahasiswa = () => {
           </div>
         </div>
       )}
-    </>
+    </>   
   );
 };
 
