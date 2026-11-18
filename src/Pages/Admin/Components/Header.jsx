@@ -1,6 +1,18 @@
+import { useNavigate } from "react-router-dom";
+
 import Button from "@/Pages/Admin/Components/Button";
+import { confirmLogout } from "@/Utils/Helpers/SwalHelpers";
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    confirmLogout(() => {
+      localStorage.removeItem("user");
+      navigate("/");
+    });
+  };
+
   const toggleProfileMenu = () => {
     const menu = document.getElementById("profileMenu");
     if (menu) menu.classList.toggle("hidden");
@@ -23,10 +35,7 @@ const Header = () => {
               Profile
             </a>
             <button
-              onClick={() => {
-                localStorage.removeItem("user");
-                location.href = "/";
-              }}
+              onClick={handleLogout}
               className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
             >
               Logout
