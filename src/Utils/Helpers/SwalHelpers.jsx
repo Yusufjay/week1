@@ -43,4 +43,8 @@ export const confirmUpdate = (onConfirm) => {
       Swal.fire("Diperbarui!", "Data berhasil diperbarui.", "success");
     }
   });
+<<<<<<< HEAD
 };
+=======
+};
+>>>>>>> 54b32c5748831d0ae473c725f2453919b1b1bca6

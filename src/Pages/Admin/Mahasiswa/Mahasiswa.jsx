@@ -9,6 +9,8 @@ import Input from "@/Pages/Admin/Components/Input";
 import Label from "@/Pages/Admin/Components/Label";
 
 import { mahasiswaList } from "@/Data/Dummy";
+import { confirmDelete, confirmUpdate } from "@/Utils/Helpers/SwalHelpers";
+import { toastSuccess, toastError } from "@/Utils/Helpers/ToastHelpers";
 
 const Mahasiswa = () => {
   const [mahasiswa, setMahasiswa] = useState([]);
@@ -18,8 +20,9 @@ const Mahasiswa = () => {
 	};
 
   useEffect(() => {
-	  setTimeout(() => fetchMahasiswa(), 500);
-	}, []);
+    const timer = setTimeout(() => fetchMahasiswa(), 500);
+    return () => clearTimeout(timer);
+  }, []);
   
   const [form, setForm] = useState({ nim: "", nama: "" });
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,18 +62,29 @@ const Mahasiswa = () => {
     e.preventDefault();
 
     if (!form.nim || !form.nama) {
-      alert("NIM dan Nama wajib diisi");
+      toastError("NIM dan Nama wajib diisi");
       return;
     }
 
     if (isEdit) {
-      updateMahasiswa(editNim, form);
+      confirmUpdate(() => {
+        updateMahasiswa(editNim, form);
+        toastSuccess("Data berhasil diperbarui");
+        setForm({ nim: "", nama: "" });
+        setIsEdit(false);
+        setIsModalOpen(false);
+      });
     } else {
+      const exists = mahasiswa.find((m) => m.nim === form.nim);
+      if (exists) {
+        toastError("NIM sudah terdaftar!");
+        return;
+      }
       addMahasiswa(form);
+      toastSuccess("Data berhasil ditambahkan");
+      setForm({ nim: "", nama: "" });
+      setIsModalOpen(false);
     }
-
-    setForm({ nim: "", nama: "" });
-    setIsModalOpen(false);
   };
 
   const handleEdit = (mhs) => {
@@ -80,11 +94,11 @@ const Mahasiswa = () => {
     setIsModalOpen(true);
   };
 
-  const handleDelete = (nim, nama) => {
-    if (confirm(`Yakin ingin hapus ${nama}?`)) {
+  const handleDelete = (nim) => {
+    confirmDelete(() => {
       deleteMahasiswa(nim);
-      alert("Data berhasil dihapus!");
-    }
+      toastSuccess("Data berhasil dihapus");
+    });
   };
 
   return (
@@ -123,6 +137,7 @@ const Mahasiswa = () => {
 
                 <td className="py-2 px-4 text-center space-x-2">
                   <Button
+                    size="sm"
                     onClick={() =>
                       navigate(`/admin/mahasiswa/${mhs.nim}`)
                     }
@@ -142,7 +157,7 @@ const Mahasiswa = () => {
                     size="sm"
                     variant="danger"
                     onClick={() =>
-                      handleDelete(mhs.nim, mhs.nama)
+                      handleDelete(mhs.nim)
                     }
                   >
                     Hapus
