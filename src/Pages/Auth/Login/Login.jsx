@@ -8,23 +8,24 @@ import Form from "@/Pages/Auth/Components/Form";
 
 import { useNavigate } from "react-router-dom";
 
-import { dummyUser } from "@/Data/Dummy";
+import { login } from "@/Utils/Apis/AuthApi";
 import { toastSuccess, toastError } from "@/Utils/Helpers/ToastHelpers";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    if (email === dummyUser.email && password === dummyUser.password) {
-      localStorage.setItem("user", JSON.stringify(dummyUser));
-      toastSuccess("Login berhasil!");
+    try {
+      const user = await login(email, password);
+      localStorage.setItem("user", JSON.stringify(user));
+      toastSuccess("Login berhasil");
       navigate("/admin/dashboard");
-    } else {
-      toastError("Email atau password salah!");
+    } catch (err) {
+      toastError(err.message);
     }
   };
 
